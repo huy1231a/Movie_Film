@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import prismadb from '@/lib/prismadb'
 import serverAuth from '@/lib/serverAuth'
+import prismadb from '@/lib/prismadb'
+import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,18 +8,16 @@ export default async function handler(
 ) {
   try {
     if (req.method !== 'GET') {
-      return res.status(405).end()
+      return res.status(400).end()
     }
 
-    // await serverAuth(req)
+    await serverAuth(req, res)
 
-    const movies = await prismadb.movie.findMany()
+    const getMovies = await prismadb.movie.findMany()
 
-    console.log('phim heo', movies)
-
-    return res.status(200).json(movies)
+    return res.status(200).json(getMovies)
   } catch (error) {
-    console.log({ error })
-    return res.status(500).end()
+    console.log(error)
+    return res.status(500).json('error get')
   }
 }

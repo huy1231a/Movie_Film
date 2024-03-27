@@ -6,9 +6,17 @@ interface InputProps {
   value: string
   label: string
   type?: string
+  error: boolean
 }
 
-const Input: React.FC<InputProps> = ({ id, label, onChange, value, type }) => {
+const Input: React.FC<InputProps> = ({
+  id,
+  label,
+  onChange,
+  value,
+  type,
+  error,
+}) => {
   return (
     <div className='relative'>
       <input
@@ -16,7 +24,9 @@ const Input: React.FC<InputProps> = ({ id, label, onChange, value, type }) => {
         value={value}
         type={type}
         onChange={onChange}
-        className='block rounded-md px-6 pt-6 pb-1 w-full text-md text-white bg-neutral-700 focus:outline-none focus:ring-0 peer'
+        className={`block rounded-md px-6 pt-6 pb-1 w-full text-md text-white bg-neutral-700 focus:outline-none focus:ring-0 peer ${
+          error && 'border-2 border-red-500'
+        }`}
         placeholder=' '
       />
       <label

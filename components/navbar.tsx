@@ -5,6 +5,7 @@ import { IoMdMenu } from 'react-icons/io'
 import { BsSearch, BsBell } from 'react-icons/bs'
 import MobileMenu from './mobileMenu'
 import AccoutMenu from './accountMenu'
+import { useRouter } from 'next/router'
 
 interface NavbarProps {
   username: string
@@ -12,6 +13,7 @@ interface NavbarProps {
 const TOP_OFFSET = 66
 
 const Navbar: React.FC<NavbarProps> = ({ username }) => {
+  const router = useRouter()
   const [isMobile, setIsMobile] = useState(false)
   const [isAccount, setIsAccout] = useState(false)
   const [isBackGround, setIsBackGround] = useState(false)
@@ -47,7 +49,12 @@ const Navbar: React.FC<NavbarProps> = ({ username }) => {
         className={`px-4 md:px-16 py-6 flex flex-row items-center transition duration-500 ${
           isBackGround ? 'bg-zinc-900 bg-opacity-90' : ''
         }`}>
-        <img className='h-5 lg:h-7' src='/images/logo.png' alt='logo' />
+        <img
+          className='h-8 lg:h-10 cursor-pointer'
+          src='/images/logo2.png'
+          alt='logo'
+          onClick={() => router.push('/')}
+        />
         <div className='flex-row ml-8 gap-7 hidden lg:flex'>
           <NavbarItem label='Home' />
           <NavbarItem label='Series' />

@@ -3,12 +3,34 @@ import Button from '@/components/button'
 import Input from '@/components/input'
 import Image from 'next/image'
 import React, { useCallback, useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { getSession, signIn } from 'next-auth/react'
 import { FcGoogle } from 'react-icons/fc'
 import { FaFacebook } from 'react-icons/fa'
+import { useRouter } from 'next/router'
+import { NextPageContext } from 'next'
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context)
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {},
+  }
+}
 
 const Auth = () => {
+  const router = useRouter()
   const [email, setEmail] = useState<string>('')
+  const [mesage, setMessage] = useState<string>('')
+  const [error, setError] = useState<boolean>(false)
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [isValid, setIsValdid] = useState<string>('login')
@@ -31,15 +53,36 @@ const Auth = () => {
 
   const login = useCallback(async () => {
     try {
-      await signIn('credentials', {
+      if (!email) {
+        setError(true)
+        setMessage('Email and Password is requied')
+        return
+      }
+      if (!password) {
+        setError(true)
+        setMessage('Password is requied')
+        return
+      }
+      const data = await signIn('credentials', {
         email,
         password,
-        callbackUrl: '/profiles',
+        redirect: false,
+        callbackUrl: '/',
       })
+
+      if (data?.status !== 200) {
+        setError(true)
+        setMessage('Invalid Email or Password')
+        return
+      } else {
+        router.push('/profiles')
+      }
+
+      data
     } catch (error) {
       console.log(error)
     }
-  }, [email, password])
+  }, [email, password, router])
 
   return (
     <div className='relative h-full w-full  bg-[url("/images/hero.jpg")] bg-no-repeat bg-center bg-fixed bg-cover'>
@@ -62,6 +105,7 @@ const Auth = () => {
                   }}
                   value={name}
                   type='name'
+                  error={error}
                 />
               )}
               <Input
@@ -72,16 +116,19 @@ const Auth = () => {
                 }}
                 value={email}
                 type='email'
+                error={error}
               />
               <Input
                 id='password'
                 label='Password'
+                error={error}
                 onChange={(e: any) => {
                   setPassword(e.target.value)
                 }}
                 value={password}
                 type='password'
               />
+              {error && <p className='text-red-700'>{mesage}</p>}
               <div className='mt-10'></div>
               <Button
                 contend={`${isValid === 'login' ? 'Login' : 'Register'}`}

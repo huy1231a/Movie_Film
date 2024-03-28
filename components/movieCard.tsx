@@ -21,6 +21,9 @@ const MovieCard: React.FC<MovieCardProps> = ({ data }) => {
           src={data.thumbnailUrl}
           alt='thum'
           className='cursor-pointer object-cover transition duration shadow-xl rounded-t-md w-full h-[12vw]'
+          onClick={() => {
+            router.push(`/watch/${data?.id}`)
+          }}
         />
         <div className='z-10 bg-zinc-800 p-2 lg:p-4 absolute w-full transition shadow-md rounded-b-md'>
           <div className='flex flex-row items-center gap-3'>
